@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\User;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -24,8 +25,10 @@ return new class extends Migration
 
         User::firstOrCreate(
             [
-                'name' => 'Admin Principal',
                 'email' => 'admin@admin',
+            ],
+            [
+                'name' => 'Admin Principal',
                 'email_verified_at' => now(),
                 'password' => Hash::make('12345678'),
                 'role' => 'admin',
@@ -34,8 +37,10 @@ return new class extends Migration
 
         User::firstOrCreate(
             [
-                'name' => 'Enterprise',
                 'email' => 'enterprise@enterprise',
+            ],
+            [
+                'name' => 'Enterprise',
                 'email_verified_at' => now(),
                 'password' => Hash::make('12345678'),
                 'role' => 'enterprise',

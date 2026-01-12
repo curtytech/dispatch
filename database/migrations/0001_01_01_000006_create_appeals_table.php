@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('appeals', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('fine_id')->constrained()->cascadeOnDelete();
-            $table->json('status');
+            $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
+            $table->foreignId('fine_id')->constrained('fines')->cascadeOnDelete();
+            $table->foreignId('appeal_status_id')->constrained('appeal_statuses')->cascadeOnDelete();
             $table->date('date');
             $table->timestamps();
         });   

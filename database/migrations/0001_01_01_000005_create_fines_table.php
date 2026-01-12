@@ -14,8 +14,8 @@ return new class extends Migration
         //Fine = Multa
         Schema::create('fines', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('vehicle_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
+            $table->foreignId('vehicle_id')->constrained('vehicle')->cascadeOnDelete();
             $table->string('ait');
             $table->date('fine_date');
             $table->string('description');

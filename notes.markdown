@@ -8,9 +8,8 @@
 
 > Citação
 
-Ideias Dashboard 
-Lista de Imoveis mais vistos
-
+Ideias 
+Relatorios
 
 
 # Comands
@@ -27,3 +26,13 @@ php artisan key:generate
 
 ### criar link simbólico
 php artisan storage:link
+
+
+## Prompts
+Crie os menus do filament traduzidos com objetivo de um sistema de gerenciamento de despacho de veiculos
+com base nos migrations criados 
+
+
+crie o menu usuarios no filament so o admin podera criar novos usuarios e editar os usuarios existentes
+
+Crie a dashboard no filament traduzida com objetivo de um sistema de gerenciamento de despacho de veiculos
