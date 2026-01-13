@@ -27,14 +27,28 @@ class VehicleResource extends Resource
 
     protected static ?string $navigationGroup = 'Gerenciamento';
 
+    public static function getEloquentQuery(): Builder
+    {
+        $query = parent::getEloquentQuery();
+
+        if (auth()->user()->role !== 'admin') {
+            $query->where('user_id', auth()->id());
+        }
+
+        return $query;
+    }
+
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\Select::make('user_id')
-                    ->relationship('user', 'name')
-                    ->required()
-                    ->label('Usuário'),
+                auth()->user()->role === 'admin'
+                    ? Forms\Components\Select::make('user_id')
+                        ->relationship('user', 'name')
+                        ->required()
+                        ->label('Usuário')
+                    : Forms\Components\Hidden::make('user_id')
+                        ->default(auth()->id()),
                 Forms\Components\TextInput::make('name')
                     ->required()
                     ->maxLength(255)
@@ -53,20 +67,15 @@ class VehicleResource extends Resource
                     ->required()
                     ->maxLength(11)
                     ->placeholder('Informe os 11 números do RENAVAM')
-
-                    // NÃO use numeric(), nem mask numeric
                     ->extraInputAttributes([
                         'type' => 'text',
                         'inputmode' => 'numeric',
                     ])
-
                     ->dehydrateStateUsing(fn ($state) => preg_replace('/\D/', '', $state))
-
                     ->rules([
                         'required',
                         'digits:11',
                     ])
-
                     ->validationMessages([
                         'required' => 'O RENAVAM é obrigatório.',
                         'digits' => 'O RENAVAM deve conter exatamente 11 números.',
@@ -80,19 +89,15 @@ class VehicleResource extends Resource
                     ->required()
                     ->maxLength(4)
                     ->placeholder('2024')
-
                     ->extraInputAttributes([
                         'type' => 'text',
                         'inputmode' => 'numeric',
                     ])
-
                     ->dehydrateStateUsing(fn ($state) => preg_replace('/\D/', '', $state))
-
                     ->rules([
                         'required',
                         'digits:4',
                     ])
-
                     ->validationMessages([
                         'required' => 'O ano é obrigatório.',
                         'digits' => 'O ano deve conter exatamente 4 números.',
@@ -110,22 +115,25 @@ class VehicleResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('user.name')
                     ->label('Usuário')
-                    ->sortable(),
+                    ->sortable()
+                    ->visible(auth()->user()->role === 'admin'),
                 Tables\Columns\TextColumn::make('name')
-                    ->label('Nome')
-                    ->searchable(),
+                    ->searchable()
+                    ->label('Nome'),
                 Tables\Columns\TextColumn::make('plate')
-                    ->label('Placa')
-                    ->searchable(),
+                    ->searchable()
+                    ->label('Placa'),
                 Tables\Columns\TextColumn::make('renavam')
-                    ->label('Renavam')
-                    ->searchable(),
+                    ->searchable()
+                    ->label('Renavam'),
                 Tables\Columns\TextColumn::make('model')
-                    ->label('Modelo')
-                    ->searchable(),
+                    ->searchable()
+                    ->label('Modelo'),
                 Tables\Columns\TextColumn::make('year')
+                    ->searchable()
                     ->label('Ano'),
                 Tables\Columns\TextColumn::make('type')
+                    ->searchable()
                     ->label('Tipo'),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()

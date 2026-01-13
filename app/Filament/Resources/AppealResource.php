@@ -27,16 +27,34 @@ class AppealResource extends Resource
 
     protected static ?string $navigationGroup = 'Gerenciamento';
 
+    public static function getEloquentQuery(): Builder
+    {
+        $query = parent::getEloquentQuery();
+
+        if (auth()->user()->role !== 'admin') {
+            $query->where('user_id', auth()->id());
+        }
+
+        return $query;
+    }
+
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\Select::make('user_id')
-                    ->relationship('user', 'name')
-                    ->required()
-                    ->label('Usuário'),
+                auth()->user()->role === 'admin'
+                    ? Forms\Components\Select::make('user_id')
+                        ->relationship('user', 'name')
+                        ->required()
+                        ->label('Usuário')
+                    : Forms\Components\Hidden::make('user_id')
+                        ->default(auth()->id()),
                 Forms\Components\Select::make('fine_id')
-                    ->relationship('fine', 'ait')
+                    ->relationship('fine', 'ait', function (Builder $query) {
+                        if (auth()->user()->role !== 'admin') {
+                            $query->where('user_id', auth()->id());
+                        }
+                    })
                     ->required()
                     ->label('Multa (AIT)'),
                 Forms\Components\Select::make('appeal_status_id')
@@ -56,7 +74,8 @@ class AppealResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('user.name')
                     ->label('Usuário')
-                    ->sortable(),
+                    ->sortable()
+                    ->visible(auth()->user()->role === 'admin'),
                 Tables\Columns\TextColumn::make('fine.ait')
                     ->label('Multa (AIT)')
                     ->sortable(),
