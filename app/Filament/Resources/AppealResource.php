@@ -45,7 +45,8 @@ class AppealResource extends Resource
                     ->required(),
                 Forms\Components\DatePicker::make('date')
                     ->required()
-                    ->label('Data'),
+                    ->label('Data')
+                    ->maxDate('today'),
             ]);
     }
 

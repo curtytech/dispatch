@@ -3,10 +3,19 @@
 namespace App\Filament\Resources\DriverResource\Pages;
 
 use App\Filament\Resources\DriverResource;
-use Filament\Actions;
 use Filament\Resources\Pages\CreateRecord;
 
 class CreateDriver extends CreateRecord
 {
     protected static string $resource = DriverResource::class;
+
+    protected function getRedirectUrl(): string
+    {
+        return $this->getReturnUrl() ?? $this->getResource()::getUrl('index');
+    }
+
+    protected function getReturnUrl(): ?string
+    {
+        return request()->query('return_url');
+    }
 }

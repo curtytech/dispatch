@@ -40,12 +40,34 @@ class FineResource extends Resource
                     ->required()
                     ->label('Veículo'),
                 Forms\Components\TextInput::make('ait')
+                    ->label('AIT')
                     ->required()
-                    ->maxLength(255)
-                    ->label('AIT'),
+                    ->maxLength(12)
+                    ->helperText('Número do Auto de Infração de Trânsito')
+                    ->placeholder('Informe o número do AIT')
+
+                    ->extraInputAttributes([
+                        'type' => 'text',
+                        'inputmode' => 'numeric',
+                    ])
+
+                    ->dehydrateStateUsing(fn ($state) => preg_replace('/\D/', '', $state))
+
+                    ->rules([
+                        'required',
+                        'regex:/^[0-9]{10,12}$/',
+                    ])
+
+                    ->validationMessages([
+                        'required' => 'O número do AIT é obrigatório.',
+                        'regex' => 'O AIT deve conter apenas números e ter entre 10 e 12 dígitos.',
+                    ]),
+
                 Forms\Components\DatePicker::make('fine_date')
+                    ->label('Data da Multa')
                     ->required()
-                    ->label('Data da Multa'),
+                    ->maxDate(now())
+                    ->rule('before_or_equal:today'),
                 Forms\Components\TextInput::make('description')
                     ->required()
                     ->maxLength(255)

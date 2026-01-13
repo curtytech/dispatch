@@ -41,20 +41,62 @@ class VehicleResource extends Resource
                     ->label('Nome'),
                 Forms\Components\TextInput::make('plate')
                     ->required()
-                    ->maxLength(255)
-                    ->label('Placa'),
-                Forms\Components\TextInput::make('renavam')
+                    ->maxLength(7)
+                    ->placeholder('ABC1D23')
+                    ->label('Placa')
+                    ->reactive()
+                    ->afterStateUpdated(function ($state, callable $set) {
+                        $set('plate', strtoupper($state));
+                    }),
+                 Forms\Components\TextInput::make('renavam')
+                    ->label('RENAVAM')
                     ->required()
-                    ->maxLength(255)
-                    ->label('Renavam'),
+                    ->maxLength(11)
+                    ->placeholder('Informe os 11 números do RENAVAM')
+
+                    // NÃO use numeric(), nem mask numeric
+                    ->extraInputAttributes([
+                        'type' => 'text',
+                        'inputmode' => 'numeric',
+                    ])
+
+                    ->dehydrateStateUsing(fn ($state) => preg_replace('/\D/', '', $state))
+
+                    ->rules([
+                        'required',
+                        'digits:11',
+                    ])
+
+                    ->validationMessages([
+                        'required' => 'O RENAVAM é obrigatório.',
+                        'digits' => 'O RENAVAM deve conter exatamente 11 números.',
+                    ]),
                 Forms\Components\TextInput::make('model')
                     ->required()
                     ->maxLength(255)
                     ->label('Modelo'),
-                Forms\Components\TextInput::make('year')
+               Forms\Components\TextInput::make('year')
+                    ->label('Ano')
                     ->required()
-                    ->maxLength(255)
-                    ->label('Ano'),
+                    ->maxLength(4)
+                    ->placeholder('2024')
+
+                    ->extraInputAttributes([
+                        'type' => 'text',
+                        'inputmode' => 'numeric',
+                    ])
+
+                    ->dehydrateStateUsing(fn ($state) => preg_replace('/\D/', '', $state))
+
+                    ->rules([
+                        'required',
+                        'digits:4',
+                    ])
+
+                    ->validationMessages([
+                        'required' => 'O ano é obrigatório.',
+                        'digits' => 'O ano deve conter exatamente 4 números.',
+                    ]),
                 Forms\Components\TextInput::make('type')
                     ->required()
                     ->maxLength(255)

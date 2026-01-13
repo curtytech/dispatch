@@ -3,8 +3,8 @@
 namespace App\Filament\Resources\AppealResource\Pages;
 
 use App\Filament\Resources\AppealResource;
+use Filament\Resources\Pages\EditRecord; // <- IMPORT CORRETO
 use Filament\Actions;
-use Filament\Resources\Pages\EditRecord;
 
 class EditAppeal extends EditRecord
 {
@@ -15,5 +15,15 @@ class EditAppeal extends EditRecord
         return [
             Actions\DeleteAction::make(),
         ];
+    }
+
+    protected function getRedirectUrl(): string
+    {
+        return $this->getPreviousUrl() ?? $this->getResource()::getUrl('index');
+    }
+
+    protected function getPreviousUrl(): ?string
+    {
+        return session()->pull('filament.previous_url');
     }
 }
