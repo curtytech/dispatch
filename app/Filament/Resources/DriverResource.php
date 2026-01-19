@@ -11,6 +11,7 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model; // Import adicionado
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class DriverResource extends Resource
@@ -184,6 +185,22 @@ class DriverResource extends Resource
         return [
             //
         ];
+    }
+
+    // Métodos de permissão adicionados
+    public static function canCreate(): bool
+    {
+        return auth()->user()->role === 'admin';
+    }
+
+    public static function canEdit(Model $record): bool
+    {
+        return auth()->user()->role === 'admin';
+    }
+
+    public static function canDelete(Model $record): bool
+    {
+        return auth()->user()->role === 'admin';
     }
 
     public static function getPages(): array
