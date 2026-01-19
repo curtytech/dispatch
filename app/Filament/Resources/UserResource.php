@@ -4,6 +4,10 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\UserResource\Pages;
 use App\Filament\Resources\UserResource\RelationManagers;
+use App\Filament\Resources\VehicleResource; // Import
+use App\Filament\Resources\DriverResource;  // Import
+use App\Filament\Resources\FineResource;    // Import
+use App\Filament\Resources\AppealResource;  // Import
 use App\Models\User;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -21,11 +25,11 @@ class UserResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-users';
 
-    protected static ?string $modelLabel = 'Usuário';
+    protected static ?string $modelLabel = 'Empresa';
 
-    protected static ?string $pluralModelLabel = 'Usuários';
+    protected static ?string $pluralModelLabel = 'Empresas';
 
-    protected static ?string $navigationLabel = 'Usuários';
+    protected static ?string $navigationLabel = 'Empresas';
 
     protected static ?string $navigationGroup = 'Gerenciamento';
 
@@ -81,6 +85,19 @@ class UserResource extends Resource
                     })
                     ->sortable()
                     ->label('Função'),
+                // Colunas de contagem adicionadas
+                Tables\Columns\TextColumn::make('vehicles_count')
+                    ->counts('vehicles')
+                    ->label('Veículos'),
+                Tables\Columns\TextColumn::make('drivers_count')
+                    ->counts('drivers')
+                    ->label('Motoristas'),
+                Tables\Columns\TextColumn::make('fines_count')
+                    ->counts('fines')
+                    ->label('Multas'),
+                Tables\Columns\TextColumn::make('appeals_count')
+                    ->counts('appeals')
+                    ->label('Recursos'),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime('d/m/Y H:i')
                     ->sortable()
@@ -91,6 +108,9 @@ class UserResource extends Resource
                 //
             ])
             ->actions([
+                Tables\Actions\ViewAction::make()
+                    ->label('Ver Dados')
+                    ->visible(fn () => auth()->user()->role === 'admin'),
                 Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
@@ -103,7 +123,10 @@ class UserResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            RelationManagers\VehiclesRelationManager::class,
+            RelationManagers\DriversRelationManager::class,
+            RelationManagers\FinesRelationManager::class,
+            RelationManagers\AppealsRelationManager::class,
         ];
     }
 
@@ -113,6 +136,7 @@ class UserResource extends Resource
             'index' => Pages\ListUsers::route('/'),
             'create' => Pages\CreateUser::route('/create'),
             'edit' => Pages\EditUser::route('/{record}/edit'),
+            'view' => Pages\ViewUser::route('/{record}'),
         ];
     }
 

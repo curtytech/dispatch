@@ -148,7 +148,10 @@ class VehicleResource extends Resource
                     ->label('Atualizado em'),
             ])
             ->filters([
-                //
+                Tables\Filters\SelectFilter::make('user_id')
+                    ->relationship('user', 'name')
+                    ->label('Usuário')
+                    ->visible(fn () => auth()->user()->role === 'admin'),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
